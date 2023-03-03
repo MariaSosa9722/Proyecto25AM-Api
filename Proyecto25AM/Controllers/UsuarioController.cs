@@ -16,13 +16,18 @@ namespace Proyecto25AM.Controllers
             _usuarioServices = usuarioServices;
         }
 
+
+        [HttpGet]
+        public async Task<IActionResult> GetUsers()
+        {
+            return Ok(await _usuarioServices.GetUsers());
+        }
+
         [HttpPost]
-        public ActionResult<UsuarioResponse> Crear([FromBody] UsuarioResponse i)
+        public async Task<IActionResult> Crear([FromBody] UsuarioResponse i)
         {
 
-        
-            
-            return Ok(_usuarioServices.CrearUsuario(i));
+            return Ok(await _usuarioServices.CrearUsuario(i));
 
         }
 

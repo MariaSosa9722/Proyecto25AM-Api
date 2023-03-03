@@ -1,5 +1,6 @@
 ﻿using Domain.Dto;
 using Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 using Proyecto25AM.Context;
 using Proyecto25AM.Services.IServices;
 
@@ -9,6 +10,7 @@ namespace Proyecto25AM.Services.Services
     {
 
         private readonly ApplicatioDBContext _context;
+        public string Mensaje;
         public UsuarioServices(ApplicatioDBContext context)
         {
             _context = context;
@@ -17,7 +19,39 @@ namespace Proyecto25AM.Services.Services
 
         //Creacion de funciones CRUD
 
-        public async Task< UsuarioResponse> CrearUsuario(UsuarioResponse request)
+        public async Task<Response<List<Usuario>>> GetUsers()
+        {
+            try
+            {
+              
+               
+                var response = await _context.Usuarios.ToListAsync();
+
+                if (response.Count > 0)
+                {
+            
+                    return new Response<List<Usuario>>(response);
+
+                }
+                else
+                {
+                    Mensaje = "No se encontro ningun registro";
+                    return new Response<List<Usuario>>(Mensaje);
+                }
+
+
+
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Surgio un error: "+ex.Message);
+            }
+
+        }
+
+
+        public async Task<Response<Usuario>> CrearUsuario(UsuarioResponse request)
         {
 
             try
@@ -32,11 +66,11 @@ namespace Proyecto25AM.Services.Services
 
                 };
 
-                _context.Usuarios.Add(user);
-                _context.SaveChangesAsync();
+                 _context.Usuarios.Add(user);
+                await _context.SaveChangesAsync();
 
 
-                return request;
+                return new Response<Usuario>(user);
             }
             catch (Exception ex)
             {
